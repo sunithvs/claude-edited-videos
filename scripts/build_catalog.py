@@ -4,7 +4,7 @@ import argparse, concurrent.futures, io, json, re, sqlite3, subprocess
 from PIL import Image
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-p=argparse.ArgumentParser();p.add_argument('library',type=Path);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('library',type=Path);p.add_argument('--release-tag',default='videos-v1');a=p.parse_args()
 source=json.loads((a.library/'catalog.json').read_text())
 originals={r['slug']:r for r in json.loads((a.library/'source.json').read_text())}
 def public_text(text):
@@ -34,7 +34,8 @@ for r in source:
  videos=[]
  for v in r['videos']:
   raw=json.loads(v.get('variants_json') or '{}')
-  videos.append({'id':v['id'],'url':v.get('selected_url') or v['source_url'],'originalUrl':v['source_url'],'duration':v.get('duration'),'sourcePost':raw.get('source_post_url',r['post_url']),'relationship':raw.get('relationship','attached video'),'fallbacks':list(dict.fromkeys(([('https://media.skillry.dev/opus-5-5/'+r['slug']+'/original.mp4')] if originals[r['slug']].get('skillry_url') and len(r['videos'])==1 else [])+[v['source_url']]))})
+  archive_url='https://github.com/sunithvs/claude-edited-videos/releases/download/'+a.release_tag+'/'+Path(v['local_path']).name
+  videos.append({'id':v['id'],'url':archive_url,'originalUrl':v['source_url'],'duration':v.get('duration'),'sourcePost':raw.get('source_post_url',r['post_url']),'relationship':raw.get('relationship','attached video'),'fallbacks':list(dict.fromkeys([v.get('selected_url') or v['source_url']]+([('https://media.skillry.dev/opus-5-5/'+r['slug']+'/original.mp4')] if originals[r['slug']].get('skillry_url') and len(r['videos'])==1 else [])+[v['source_url']]))})
  posts.append({'id':r['id'],'slug':r['slug'],'author':r['author'],'title':public_text(title(r)),'editorialTitle':bool(r.get('title')),'category':r['category'],'tags':r['tech_tags'],'prompt':public_text(r['prompt']),'partial':r['prompt_partial'],'postText':public_text(r['post_text']),'postUrl':r['post_url'],'thumbnail':'assets/thumbs/'+r['slug']+'.webp' if available[r['slug']] else None,'videos':videos})
 posts.sort(key=lambda p:int(p['id']),reverse=True)
 (ROOT/'docs/data/catalog.json').write_text(json.dumps(posts,ensure_ascii=False,separators=(',',':')))
