@@ -15,7 +15,7 @@ A fast, searchable archive of creative coding videos and their prompts. Built fo
 - **207** prompts explicitly flagged as partial in the source
 - **12** posts with unavailable video media; their prompts remain available
 
-The original download pass saved and validated all 712 available videos, approximately 1.48 GB. Those offline video files remain in the local collection. They are excluded from this repository. The website streams the selected compact MP4 variants from their public source URLs, while thumbnails, prompts, and catalog data are hosted here. Video availability depends on the source hosts. Selected variants target a short side of up to 360px where available; the data also retains the original video URL.
+The original download pass saved and validated all 712 available videos, approximately 1.48 GB. Those offline video files remain in the local collection. They are excluded from this repository. The website streams the selected compact MP4 variants from their public source URLs, while thumbnails, prompts, and catalog data are hosted here. Video availability depends on the source hosts. The page sets `Referrer-Policy: no-referrer` through its HTML meta tag because the X video CDN rejects requests that include the GitHub Pages referrer. Source mirrors and original media URLs are attempted if the selected variant fails. Selected variants target a short side of up to 360px where available; the data also retains the original video URL.
 
 ## Website features
 
